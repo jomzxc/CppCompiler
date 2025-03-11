@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Created on 2025-03-11
+
+@author: Jomzxc
+"""
+
 from ply import lex
 
 # --- Lexer ---
