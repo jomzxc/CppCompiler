@@ -12,19 +12,21 @@ precedence = (
 def p_program(p):
     '''program : function_list
                | empty'''
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-        p[0] = []
+    p[0] = ('program', p[1])
 
 def p_function_list(p):
     '''function_list : function
                      | function_list function
                      | empty'''
     if len(p) == 2:
-        p[0] = p[1] if p[1] != None else []
-    else:
+        if p[1] is None:
+            p[0] = []
+        else:
+            p[0] = [p[1]]
+    elif len(p) == 3:
         p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
 
 def p_function(p):
     '''function : TYPE ID LPAREN param_list RPAREN block
@@ -39,9 +41,14 @@ def p_param_list(p):
                   | param_list COMMA param
                   | empty'''
     if len(p) == 2:
-        p[0] = p[1] if p[1] != None else []
-    else:
+        if p[1] is None:
+            p[0] = []
+        else:
+            p[0] = [p[1]]
+    elif len(p) == 4:
         p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 def p_param(p):
     '''param : TYPE ID'''
@@ -56,9 +63,14 @@ def p_statement_list(p):
                       | statement_list statement
                       | empty'''
     if len(p) == 2:
-        p[0] = p[1] if p[1]!=None else []
-    else:
+        if p[1] is None:
+            p[0] = []
+        else:
+            p[0] = [p[1]]
+    elif len(p) == 3:
         p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
 
 def p_statement(p):
     '''statement : loop_statement
@@ -67,24 +79,24 @@ def p_statement(p):
                  | return_statement SEMI
                  | block
                  | declaration_statement_no_semi SEMI'''
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-        p[0] = p[1]
+    p[0] = p[1]
 
 def p_loop_statement(p):
     '''loop_statement : FOR LPAREN for_init SEMI expression_opt SEMI expression_opt RPAREN block
                       | WHILE LPAREN expression RPAREN block'''
     if p[1] == 'for':
         p[0] = ('for_loop', p[3], p[5], p[7], p[9])
-    else:
+    elif p[1] == 'while':
         p[0] = ('while_loop', p[3], p[5])
 
 def p_for_init(p):
     '''for_init : declaration_statement_no_semi
                 | expression
                 | empty'''
-    p[0] = p[1] if len(p)>1 and p[1]!=None else None
+    if len(p) > 1 and p[1] is not None:
+        p[0] = p[1]
+    else:
+        p[0] = None
 
 def p_declaration_statement_no_semi(p):
     '''declaration_statement_no_semi : TYPE ID
@@ -105,7 +117,10 @@ def p_return_statement(p):
 def p_expression_opt(p):
     '''expression_opt : expression
                       | empty'''
-    p[0] = p[1] if len(p) > 1 and p[1]!=None else None
+    if len(p) > 1 and p[1] is not None:
+        p[0] = p[1]
+    else:
+        p[0] = None
 
 def p_expression_binop(p):
     '''expression : expression PLUS expression
@@ -117,13 +132,13 @@ def p_expression_binop(p):
                   | expression LT expression
                   | expression GT expression
                   | expression LEQ expression
-                  | expression GEQ expression
-                  | expression ASSIGN expression
-                  | ID ASSIGN expression'''
+                  | expression GEQ expression'''
     if len(p) == 4:
         p[0] = ('binop', p[2], p[1], p[3])
-    else:
-        p[0] = ('assign', p[1],p[3])
+
+def p_expression_assign(p):
+    '''expression : ID ASSIGN expression'''
+    p[0] = ('assign', p[1], p[3])
 
 def p_expression_group(p):
     'expression : LPAREN expression RPAREN'
@@ -146,26 +161,66 @@ def p_arg_list(p):
                 | arg_list COMMA expression
                 | empty'''
     if len(p) == 2:
-        p[0] = p[1] if p[1]!=None else []
-    else:
+        if p[1] is None:
+            p[0] = []
+        else:
+            p[0] = [p[1]]
+    elif len(p) == 4:
         p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 def p_empty(p):
     'empty :'
-    p[0] = []
+    p[0] = None
 
 def p_error(p):
     if p:
-        print(f"Syntax error at line {p.lineno}, token {p.type} ({p.value})")
+        print(f"Syntax error at line {p.lineno}, column {p.lexpos}, token {p.type} ({p.value})")
     else:
         print("Syntax error at EOF")
 
 parser = yacc.yacc()
 
 # --- Test ---
-if __name__ == "__main__":
-    sample_code = """
-    int main() {}
-    """
-    parsed = parser.parse(sample_code)
-    print(parsed)
+# if __name__ == "__main__":
+#     sample_code = """
+#     int main() {
+#             int x = 5;
+#             x = x + 3;
+#             while (x < 10) {
+#                 x = x * 2;
+#             }
+#             return x;
+#         }
+#     """
+#     parsed = parser.parse(sample_code)
+#     print(parsed)
+#     # now lets show some errors.
+#     sample_code_error_1 = """
+#     int main() {
+#         int x = 5;
+#         x = x + 3;
+#         while (x < 10) {
+#             x = x * 2
+#         }
+#         return x;
+#     """
+#     print("---Error test 1---")
+#     parsed = parser.parse(sample_code_error_1)
+#
+#     sample_code_error_2 = """
+#     int main(int a, ) {
+#         return 0;
+#     }
+#     """
+#     print("---Error test 2---")
+#     parsed = parser.parse(sample_code_error_2)
+#
+#     sample_code_error_3 = """
+#     int main() {
+#         x = 5 +;
+#     }
+#     """
+#     print("---Error test 3---")
+#     parsed = parser.parse(sample_code_error_3)
