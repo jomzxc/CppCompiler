@@ -57,6 +57,7 @@ class ParserTest(unittest.TestCase):
         }
         """
         result = parser.parse(code, lexer=lexer)
+        self.assertEqual(('program', [('function', 'int', 'main', [], ('block', [('declare', 'int', 'x', ('number', 5)), ('assign', 'x', ('binop', '+', ('id', 'x'), ('number', 3))), ('for_loop', ('declare', 'int', 'i', ('number', 0)), ('binop', '<', ('id', 'i'), ('number', 10)), ('assign', 'i', ('binop', '+', ('id', 'i'), ('number', 1))), ('block', [('assign', 'x', ('binop', '*', ('id', 'x'), ('id', 'i')))])), ('return', ('id', 'x'))]))]), result)
 
     def test_full_program_with_while(self):
         code = """
