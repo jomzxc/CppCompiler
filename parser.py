@@ -8,6 +8,7 @@ Created on 2025-03-11
 
 from ply import yacc
 from lexer import tokens
+import semantic
 
 # Define operator precedence. This is used to resolve parsing ambiguities.
 # Operators lower in the list have higher precedence.
@@ -249,10 +250,22 @@ def p_expression_id(p):
 
 
 def p_expression_number(p):
-    """expression : NUMBER"""
-    # Number literal in an expression.
-    # p[0] is ('number', number_value) - number_value is the parsed number (integer or float, depending on lexer).
-    p[0] = ('number', p[1])
+    """expression : INT_NUM
+                 | FLOAT_NUM
+                 | DOUBLE_NUM
+                 | CHAR_LIT
+                 | BOOL_LIT"""
+    # Create different AST nodes based on the type
+    if p.slice[1].type == 'INT_NUM':
+        p[0] = ('int_literal', p[1])
+    elif p.slice[1].type == 'FLOAT_NUM':
+        p[0] = ('float_literal', p[1])
+    elif p.slice[1].type == 'DOUBLE_NUM':
+        p[0] = ('double_literal', p[1])
+    elif p.slice[1].type == 'CHAR_LIT':
+        p[0] = ('char_literal', p[1])
+    elif p.slice[1].type == 'BOOL_LIT':
+        p[0] = ('bool_literal', p[1])
 
 
 def p_arg_list(p):
@@ -361,3 +374,55 @@ parser = yacc.yacc()
     # """
     # print("---Error test 3---")
     # parsed = parser.parse(sample_code_error_3)
+
+    # # sample int error
+    # sample_code_error_int = """
+    # int main() {
+    #     int x = 3;
+    #     return 0;
+    # }
+    # """
+    # print("---Testing Invalid Integer---")
+    # parsed = parser.parse(sample_code_error_int)
+    # semantic.analyze_ast(parsed)
+
+    # # sample float error
+    # sample_code_error_float = """
+    # int main() {
+    #     float x = 'a';
+    # }
+    # """
+    # print("---Testing Invalid Float---")
+    # parsed = parser.parse(sample_code_error_float)
+    # semantic.analyze_ast(parsed)
+
+    # # sample double error
+    # sample_code_error_double = """
+    # int main() {
+    #     double x = 2.5;
+    #     return 0;
+    # }
+    # """
+    # print("---Testing Invalid Double---")
+    # parsed = parser.parse(sample_code_error_double)
+
+    # # sample char error
+    # sample_code_error_char = """
+    # int main() {
+    #     char c = 'AB';
+    #     return 0;
+    # }
+    # """
+    # print("---Testing Invalid Char---")
+    # parsed = parser.parse(sample_code_error_char)
+
+    # # sample bool error
+    # sample_code_error_bool = """
+    # int main() {
+    #     bool flag = TRUE;
+    #     return 0;
+    # }
+    # """
+    # print("---Testing Invalid Boolean---")
+    # parsed = parser.parse(sample_code_error_bool)
+    # semantic.analyze_ast(parsed)
