@@ -36,5 +36,6 @@ def parse_code():
         error_message = f"{str(e)}\n❌ invalid"
         return jsonify({'error': error_message})
 
+# Run the app
 if __name__ == '__main__':
     app.run(debug=True)

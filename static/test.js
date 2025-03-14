@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize line numbers
     updateLineNumbers();
     
-    // Update line numbers when text changes
+    // Update line numbers when text changes ...
     codeEditor.addEventListener('input', updateLineNumbers);
     
     // Update line numbers when scrolling to keep them in sync
