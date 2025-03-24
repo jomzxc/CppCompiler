@@ -1,9 +1,9 @@
-#parser.py
 import ply.yacc as yacc
 from lexer import lexer, tokens
 from syntax_tree import *
 
 parsing_error = False
+syntax_errors = []
 
 tokens = tokens
 
@@ -203,20 +203,44 @@ def p_primary_expression(p):
     if len(p) == 2:
         if p.slice[1].type == 'ID':
             p[0] = Identifier(p[1])
+            if p[0]:
+                p[0].lineno = p.lineno(1)  # Set lineno as an attribute after creation
+                p[0].lexpos = p.lexpos(1)  # Set lexpos as an attribute after creation
         elif p.slice[1].type == 'INT_NUM':
             p[0] = Literal('int', p[1])
+            if p[0]:
+                p[0].lineno = p.lineno(1)
+                p[0].lexpos = p.lexpos(1)
         elif p.slice[1].type == 'FLOAT_NUM':
             p[0] = Literal('float', p[1])
+            if p[0]:
+                p[0].lineno = p.lineno(1)
+                p[0].lexpos = p.lexpos(1)
         elif p.slice[1].type == 'DOUBLE_NUM':
             p[0] = Literal('double', p[1])
+            if p[0]:
+                p[0].lineno = p.lineno(1)
+                p[0].lexpos = p.lexpos(1)
         elif p.slice[1].type == 'CHAR_LIT':
             p[0] = Literal('char', p[1])
+            if p[0]:
+                p[0].lineno = p.lineno(1)
+                p[0].lexpos = p.lexpos(1)
         elif p.slice[1].type == 'BOOL_LIT':
             p[0] = Literal('bool', p[1])
+            if p[0]:
+                p[0].lineno = p.lineno(1)
+                p[0].lexpos = p.lexpos(1)
     elif len(p) == 4:
         p[0] = p[2]
+        if p[0]:
+            p[0].lineno = p.lineno(1)
+            p[0].lexpos = p.lexpos(1)
     elif len(p) == 5:
         p[0] = CallExpression(Identifier(p[1]), p[3])
+        if p[0].callee: # Access the Identifier object within CallExpression
+            p[0].callee.lineno = p.lineno(1)
+            p[0].callee.lexpos = p.lexpos(1)
 
 def p_argument_list_opt(p):
     '''argument_list_opt : argument_list
@@ -240,135 +264,17 @@ def p_empty(p):
 # --- Error Handling ---
 
 def p_error(p):
-    global parsing_error
+    global parsing_error, syntax_errors
     parsing_error = True
     if p:
-        error_message = f"Syntax error at line {p.lineno}, column {p.lexpos}: Unexpected token '{p.value}' of type '{p.type}'"
-        print(error_message)
+        column = p.lexpos - lexer.lexdata.rfind('\n', 0, p.lexpos) + 1
+        error_message = f"Syntax error at line {p.lineno}, column {column}: Unexpected token '{p.value}' of type '{p.type}'"
+        print(error_message) # Keep printing for console output if needed
+        syntax_errors.append(error_message) # Store the error
         parser.errok()
     else:
-        print("Syntax error at EOF")
+        print("Syntax error at EOF") # Keep printing for console output if needed
+        syntax_errors.append("Syntax error at EOF") # Store the error
 
 # --- Build the Parser ---
 parser = yacc.yacc()
-
-
-# Sample 1: Simple function definition
-sample_code_1 = """
-int add(int a, int b) {
-    return a + b;
-}
-"""
-
-# Sample 2: Function with no parameters
-sample_code_2 = """
-int get_value() {
-    return 100;
-}
-"""
-
-# Sample 3: Variable declaration and assignment
-sample_code_3 = """
-int main() {
-    int x;
-    x = 5;
-    int y = 10;
-    return y;
-}
-"""
-
-# Sample 4: Arithmetic expression
-sample_code_4 = """
-int calculate() {
-    int result = (5 * 2) + (10 - 3);
-    return result;
-}
-"""
-
-# Sample 5: Comparison expression
-sample_code_5 = """
-bool compare(int a, int b) {
-    return a > b;
-}
-"""
-
-# Sample 6: If statement
-sample_code_6 = """
-void check(int num) {
-    if (num > 0) {
-        return;
-    }
-}
-"""
-
-# Sample 7: If-else statement
-sample_code_7 = """
-int get_parity(int num) {
-    if (num % 2 == 0) {
-        return 0;
-    } else {
-        return 1;
-    }
-}
-"""
-
-# Sample 8: For loop
-sample_code_8 = """
-int sum_up() {
-    int sum = 0;
-    for (int i = 0; i < 5; i = i + 1) {
-        sum = sum + i;
-    }
-    return sum;
-}
-"""
-
-# Sample 9: While loop
-sample_code_9 = """
-int decrement(int n) {
-    while (n > 0) {
-        n = n - 1;
-    }
-    return n;
-}
-"""
-
-# Sample 10: Multiple declarations and statements in a block
-sample_code_10 = """
-int process() {
-    int a = 5;
-    int b;
-    b = a * 2;
-    int c = b + 1;
-    return c;
-}
-"""
-
-# Test case that was failing
-test_code_identity_call = """
-int main() {
-    int x = identity(10);
-    return 0;
-}
-"""
-
-# if __name__ == '__main__':
-#     # You can test each sample by assigning it to test_code
-#     test_code = test_code_identity_call  # Change this to test other samples
-#
-#     lexer.input(test_code)
-#     tokens_generated = []
-#     while True:
-#         tok = lexer.token()
-#         if not tok:
-#             break
-#         tokens_generated.append(tok)
-#     print("Tokens:", tokens_generated)
-#
-#     parser.parse(test_code, lexer=lexer)
-#     if not parsing_error:
-#         print("\nParsing successful!")
-#         ast_result = parser.parse(test_code, lexer=lexer)
-#         print("\nAbstract Syntax Tree:", ast_result)
-#     else:
-#         print("\nParsing failed due to syntax errors.")
