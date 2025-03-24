@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from lexer import lexer  # Importing the lexer
+from lexer import lexer
 from parser import parser  # Importing the parser
 
 app = Flask(__name__)
