@@ -378,13 +378,13 @@ parser = yacc.yacc()
     # # sample int error
     # sample_code_error_int = """
     # int main() {
-    #     int x = 3;
+    #     int x = 3.14;
     #     return 0;
     # }
     # """
     # print("---Testing Invalid Integer---")
     # parsed = parser.parse(sample_code_error_int)
-    # semantic.analyze_ast(parsed)
+    # semantic.s_ast(parsed)
 
     # # sample float error
     # sample_code_error_float = """
@@ -394,7 +394,7 @@ parser = yacc.yacc()
     # """
     # print("---Testing Invalid Float---")
     # parsed = parser.parse(sample_code_error_float)
-    # semantic.analyze_ast(parsed)
+    # semantic.s_ast(parsed)
 
     # # sample double error
     # sample_code_error_double = """
@@ -425,4 +425,4 @@ parser = yacc.yacc()
     # """
     # print("---Testing Invalid Boolean---")
     # parsed = parser.parse(sample_code_error_bool)
-    # semantic.analyze_ast(parsed)
+    # semantic.s_ast(parsed)
