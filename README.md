@@ -1,5 +1,5 @@
 # Interactive Code Parser
-
+---
 ## Description
 
 This project is an interactive code parser with a web-based frontend, built using Python and the `ply` (Python Lex-Yacc) library for the backend, and Flask for serving the web application. The frontend is implemented using HTML and JavaScript, providing a user-friendly interface to write and parse code written in a basic C-like syntax. The backend performs lexical analysis, syntactic analysis (generating an Abstract Syntax Tree - AST), and semantic analysis, reporting any syntax or semantic errors found.
@@ -33,7 +33,7 @@ This project is an interactive code parser with a web-based frontend, built usin
     * Type checking for declarations, assignments, and binary expressions.
     * Detection of undeclared variables.
     * Basic checks for function definitions (e.g., 'main' function parameters, return statements in non-void functions).
-
+---
 ## Setup Instructions
 
 **Prerequisites:**
@@ -64,7 +64,7 @@ This project is an interactive code parser with a web-based frontend, built usin
     You should see output indicating that the Flask development server is running, typically on `http://127.0.0.1:5000/`.
 
 2.  **Open the Frontend in a Browser:** Open your web browser and go to the address provided by Flask (usually `http://localhost:5000/index.html` or `http://127.0.0.1:5000/index.html`).
-
+---
 ## How to Use
 
 1.  **Enter Code:** In the web browser, you will see a text box labeled "Write your C++ code here...". Type or paste code written in the supported C-like syntax into this text box.
@@ -73,7 +73,7 @@ This project is an interactive code parser with a web-based frontend, built usin
     * **Successful Compilation:** If the code is syntactically and semantically correct, the output area will show a "✅ Compilation successful!" message, along with the number of tokens found and a "Semantic analysis: No errors found" message.
     * **Syntax Error:** If the code contains syntax errors, the output area will display an error message starting with "Error:" followed by the syntax error details (line number, column, and unexpected token).
     * **Semantic Error:** If the code is syntactically correct but contains semantic errors, the output area will display an error message starting with "Error:" followed by the semantic error details (e.g., type mismatch, undeclared variable).
-
+---
 ## Further Development
 
 Potential areas for future development include:
@@ -88,11 +88,11 @@ Potential areas for future development include:
 * **Syntax Highlighting:** Add syntax highlighting to the code editor in the frontend to improve readability.
 * **Real-time Error Checking:** Implement real-time error checking in the frontend as the user types code.
 * **Code Generation or Interpretation:** Extend the project to generate an intermediate representation or directly interpret the AST to execute the parsed code.
-
+---
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
+---
 ## Team
 
 * **Jomzxc**
