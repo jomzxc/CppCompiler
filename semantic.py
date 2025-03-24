@@ -7,6 +7,7 @@ class SymbolTable:
     def __init__(self, parent=None):
         self.symbols = {}
         self.parent = parent
+        self.undeclared_reported = set() # Add this line
 
     def get(self, name):
         if name in self.symbols:
@@ -56,7 +57,10 @@ def get_expression_type(expression, current_scope):
         if info:
             return info['type']
         else:
-            raise SemanticError(f"Semantic Error: '{expression.name}' not declared before use.")
+            if expression.name not in current_scope.undeclared_reported:
+                current_scope.undeclared_reported.add(expression.name)
+                raise SemanticError(f"Semantic Error: '{expression.name}' not declared before use.")
+            return None # Indicate that it's undeclared but the error has been reported
     elif isinstance(expression, BinaryExpression):
         left_type = get_expression_type(expression.left, current_scope)
         right_type = get_expression_type(expression.right, current_scope)
@@ -72,8 +76,9 @@ def get_expression_type(expression, current_scope):
             return 'bool'
         return None
     elif isinstance(expression, Assignment):
-        info = current_scope.get(expression.lvalue)
-        return info['type'] if info else None
+        # We still need to check the type of the right-hand side
+        expr_type = get_expression_type(expression.rvalue, current_scope)
+        return None # We don't need to return a type for the assignment itself
     return None
 
 def semantic_analyzer(ast):
@@ -167,22 +172,25 @@ def semantic_analyzer(ast):
                                 f"Semantic Error: Type mismatch in declaration of '{node.name}'. Expected '{node.data_type}', got '{initializer_type}'.")
         elif isinstance(node, Assignment):
             print(f"Assignment Node from: {node.__class__.__module__}")  # Check module
-            var_info = current_scope.get(node.lvalue)
-            if var_info:
-                expr_type = get_expression_type(node.rvalue, current_scope)
-                if expr_type:
-                    try:
-                        check_type_compatibility(var_info['type'], expr_type)
-                    except SemanticError as e:
-                        errors.append(
-                            f"Semantic Error: Type mismatch in assignment to '{node.lvalue}'. Expected '{var_info['type']}', got '{expr_type}'.")
-            # If var_info is None, the 'not declared' error will be caught in get_expression_type
-            # when the identifier is used later (in the return statement).
+            try:
+                # Check if the left-hand side variable is declared
+                get_expression_type(node.lvalue, current_scope)
+                var_info = current_scope.get(node.lvalue.name)  # Get info again after checking
+                if var_info:
+                    expr_type = get_expression_type(node.rvalue, current_scope)
+                    if expr_type:
+                        try:
+                            check_type_compatibility(var_info['type'], expr_type)
+                        except SemanticError as e:
+                            errors.append(
+                                f"Semantic Error: Type mismatch in assignment to '{node.lvalue.name}'. Expected '{var_info['type']}', got '{expr_type}'.")
+            except SemanticError as e:
+                errors.append(str(e))
         elif isinstance(node, ReturnStatement):
-            print(f"ReturnStatement Node from: {node.__class__.__module__}") # Check module
+            print(f"ReturnStatement Node from: {node.__class__.__module__}")  # Check module
             if node.value:
                 try:
-                    get_expression_type(node.value, current_scope) # Perform type checking on the return value
+                    get_expression_type(node.value, current_scope)  # Perform type checking on the return value
                 except SemanticError as e:
                     errors.append(str(e))
                     print(f"Error added from ReturnStatement: {e}")

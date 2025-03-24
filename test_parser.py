@@ -419,5 +419,14 @@ class ParserTest(unittest.TestCase):
         lexer.input(code)
         ast = parser.parse(code, lexer=lexer)
         errors = semantic_analyzer(ast)
+        print(errors)
         self.assertEqual(len(errors), 1)
         self.assertIn("Semantic Error: 'unknown_var' not declared before use.", errors[0])
+
+    def test_semantic_error_undeclared_variable_setValue(self):
+        code = "void setValue(int val) { x = val; }"
+        lexer.input(code)
+        ast = parser.parse(code, lexer=lexer)
+        errors = semantic_analyzer(ast)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Semantic Error: 'x' not declared before use.", errors[0])

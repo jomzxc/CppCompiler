@@ -110,10 +110,9 @@ def p_initializer(p):
     p[0] = p[1]
 
 # --- Assignment Statements ---
-
 def p_assignment_statement(p):
     '''assignment_statement : ID ASSIGN expression'''
-    p[0] = Assignment(p[1], p[3])
+    p[0] = Assignment(Identifier(p[1]), p[3])
 
 # --- Return Statements ---
 
