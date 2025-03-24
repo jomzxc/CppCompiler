@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize line numbers
     updateLineNumbers();
     
-    // Update line numbers when text changes ...
+    // Update line numbers when text changes
     codeEditor.addEventListener('input', updateLineNumbers);
     
     // Update line numbers when scrolling to keep them in sync
@@ -35,7 +35,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const code = codeEditor.value;
         output.textContent = '';
         runButton.disabled = true;
-        runButton.textContent = 'Running...';
+        runButton.innerHTML = 'Running...';
+        const lines = codeEditor.value.split('\n');
+        const lineCount = lines.length;
         
         // Send the code to the backend
         fetch('/run_code', {
@@ -43,14 +45,30 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ code: code })
+            body: JSON.stringify({ 
+                code: code,
+                lineCount: lineCount
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.error) {
                 output.textContent = `Error: ${data.error}`;
+                // Keep the existing styling for errors
             } else {
-                output.textContent = "✅ ok";
+                // Display successful compilation result
+                let resultText = "✅ Compilation successful!";
+                
+                // If you want to display tokens or AST information
+                if (data.output && data.output.tokens) {
+                    const tokenCount = data.output.tokens.length;
+                    resultText += `\n\nTokens found: ${tokenCount}`;
+                    
+                    // Add semantic analysis success message
+                    resultText += "\n\nSemantic analysis: No errors found";
+                }
+                
+                output.textContent = resultText;
             }
         })
         .catch(error => {
@@ -61,4 +79,12 @@ document.addEventListener('DOMContentLoaded', function() {
             runButton.innerHTML = '<span class="play-icon"></span>Compile & Run';
         });
     }
+    
+    // Add keyboard shortcut (Ctrl+Enter or Cmd+Enter) to run code
+    codeEditor.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            runCode();
+        }
+    });
 });
