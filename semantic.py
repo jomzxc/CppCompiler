@@ -60,12 +60,26 @@ def get_expression_type(expression, current_scope):
             if expression.name not in current_scope.undeclared_reported:
                 current_scope.undeclared_reported.add(expression.name)
                 raise SemanticError(f"Semantic Error: '{expression.name}' not declared before use.")
-            return None # Indicate that it's undeclared but the error has been reported
+            return None
     elif isinstance(expression, BinaryExpression):
         left_type = get_expression_type(expression.left, current_scope)
         right_type = get_expression_type(expression.right, current_scope)
         op = expression.op
-        if op in ['+', '-', '*', '/']:
+
+        if left_type is None or right_type is None:
+            return None # Error in operands already reported
+
+        if op == '+':
+            if (left_type == 'int' and right_type == 'bool') or \
+               (left_type == 'bool' and right_type == 'int'):
+                raise SemanticError(f"Type error at line {expression.lineno if hasattr(expression, 'lineno') else 0}: Invalid operation '+' between types '{left_type}' and '{right_type}'.")
+            elif left_type == 'double' or right_type == 'double':
+                return 'double'
+            elif left_type == 'float' or right_type == 'float':
+                return 'float'
+            else:
+                return 'int'
+        elif op in ['-', '*', '/']:
             if left_type == 'double' or right_type == 'double':
                 return 'double'
             elif left_type == 'float' or right_type == 'float':
@@ -76,9 +90,8 @@ def get_expression_type(expression, current_scope):
             return 'bool'
         return None
     elif isinstance(expression, Assignment):
-        # We still need to check the type of the right-hand side
         expr_type = get_expression_type(expression.rvalue, current_scope)
-        return None # We don't need to return a type for the assignment itself
+        return None
     return None
 
 def semantic_analyzer(ast):

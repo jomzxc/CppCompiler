@@ -423,8 +423,16 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("Semantic Error: 'unknown_var' not declared before use.", errors[0])
 
+    def test_semantic_error_type_mismatch_addition(self):
+        code = self.code_snippets[50]
+        lexer.input(code)
+        ast = parser.parse(code, lexer=lexer)
+        errors = semantic_analyzer(ast)
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Type error at line 1: Invalid operation '+' between types 'int' and 'bool'.", errors[0])
+
     def test_semantic_error_undeclared_variable_setValue(self):
-        code = "void setValue(int val) { x = val; }"
+        code = self.code_snippets[51]
         lexer.input(code)
         ast = parser.parse(code, lexer=lexer)
         errors = semantic_analyzer(ast)

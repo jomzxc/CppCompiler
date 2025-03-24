@@ -189,6 +189,8 @@ def p_binary_expression(p):
                          | expression AND expression
                          | expression OR expression'''
     p[0] = BinaryExpression(p[2], p[1], p[3])
+    if p[0]:
+        p[0].lineno = p.lineno(2) # Set lineno based on the operator's token
 
 def p_primary_expression(p):
     '''primary_expression : ID
