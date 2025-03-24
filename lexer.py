@@ -11,7 +11,7 @@ from ply import lex
 # --- Lexer ---
 
 tokens = (
-    'TYPE', 'ID', 'NUMBER',
+    'TYPE', 'ID', 'INT_NUM', 'FLOAT_NUM', 'CHAR_LIT', 'DOUBLE_NUM', 'BOOL_LIT',
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'ASSIGN',
     'EQ', 'NEQ', 'LT', 'GT', 'LEQ', 'GEQ',
     'LPAREN', 'RPAREN', 'LBRACE', 'RBRACE',
@@ -22,6 +22,7 @@ tokens = (
 keywords = {
     'int': 'TYPE',
     'float': 'TYPE',
+    'double': 'TYPE',
     'char': 'TYPE',
     'bool': 'TYPE',
     'void': 'TYPE',
@@ -52,14 +53,34 @@ t_COMMA = r','
 
 t_ignore = ' \t'
 
+def t_BOOL_LIT(t):
+    r'true|false'
+    t.value = True if t.value == 'true' else False
+    return t
+
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     t.type = keywords.get(t.value, 'ID')
     return t
 
-def t_NUMBER(t):
+def t_FLOAT_NUM(t):
+    r'\d*\.\d+'
+    t.value = float(t.value)
+    return t
+
+def t_DOUBLE_NUM(t):
+    r'\d*\.\d+[dD]'
+    t.value = float(t.value[:-1])
+    return t
+
+def t_INT_NUM(t):
     r'\d+'
     t.value = int(t.value)
+    return t
+
+def t_CHAR_LIT(t):
+    r'\'.\''
+    t.value = t.value[1:-1]
     return t
 
 def t_newline(t):
