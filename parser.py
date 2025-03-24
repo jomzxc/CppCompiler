@@ -352,23 +352,23 @@ int main() {
 }
 """
 
-if __name__ == '__main__':
-    # You can test each sample by assigning it to test_code
-    test_code = test_code_identity_call  # Change this to test other samples
-
-    lexer.input(test_code)
-    tokens_generated = []
-    while True:
-        tok = lexer.token()
-        if not tok:
-            break
-        tokens_generated.append(tok)
-    print("Tokens:", tokens_generated)
-
-    parser.parse(test_code, lexer=lexer)
-    if not parsing_error:
-        print("\nParsing successful!")
-        ast_result = parser.parse(test_code, lexer=lexer)
-        print("\nAbstract Syntax Tree:", ast_result)
-    else:
-        print("\nParsing failed due to syntax errors.")
+# if __name__ == '__main__':
+#     # You can test each sample by assigning it to test_code
+#     test_code = test_code_identity_call  # Change this to test other samples
+#
+#     lexer.input(test_code)
+#     tokens_generated = []
+#     while True:
+#         tok = lexer.token()
+#         if not tok:
+#             break
+#         tokens_generated.append(tok)
+#     print("Tokens:", tokens_generated)
+#
+#     parser.parse(test_code, lexer=lexer)
+#     if not parsing_error:
+#         print("\nParsing successful!")
+#         ast_result = parser.parse(test_code, lexer=lexer)
+#         print("\nAbstract Syntax Tree:", ast_result)
+#     else:
+#         print("\nParsing failed due to syntax errors.")
