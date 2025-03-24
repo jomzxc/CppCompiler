@@ -59,6 +59,7 @@ class ParserTest(unittest.TestCase):
         """int main() { return unknown_var; }""", # Semantic error: unknown variable
         """int main() { int a = 5; return a + true; }""", # Semantic error: type mismatch in addition
         """void setValue(int val) { x = val; }""", # Semantic error: x not declared in scope
+        """int main() { return 10 + 5 * (3 - 1) / 2; }""",
     ]
 
     def test_add_function(self):
@@ -438,3 +439,9 @@ class ParserTest(unittest.TestCase):
         errors = semantic_analyzer(ast)
         self.assertEqual(len(errors), 1)
         self.assertIn("Semantic Error: 'x' not declared before use.", errors[0])
+
+    def test_syntax_complex_arithmetic_expression(self):
+        code = self.code_snippets[52]
+        lexer.input(code)
+        ast = parser.parse(code, lexer=lexer)
+        self.assertIsNotNone(ast) # Check if parsing was successful
