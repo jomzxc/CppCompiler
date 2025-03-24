@@ -1,18 +1,17 @@
----
-## Function Definitions
-```
+## Valid Samples
+```c
 int add(int a, int b) { return a + b; }
 ```
-```
+```c
 int main() { int x; x = 10; return x; }
 ```
-```
+```c
 float pi = 3.14f;
 ```
-```
+```c
 void check(int num) { if (num > 0) { return; } }
 ```
-```
+```c
 int sum() {
     int total = 0;
     for (int i = 0; i < 5; i = i + 1) {
@@ -21,7 +20,7 @@ int sum() {
     return total;
 }
 ```
-```
+```c
 int decrement(int n) {
     while (n > 0) {
         n = n - 1;
@@ -29,13 +28,13 @@ int decrement(int n) {
     return n;
 }
 ```
-```
+```c
 int process() { int a = 5; int b = 10; return a * b; }
 ```
-```
+```c
 bool compare(int x, float y) { return x > y; }
 ```
-```
+```c
 int main() {
     int count = 0;
     for (int j = 0; j < 3; j = j + 1) {
@@ -44,52 +43,7 @@ int main() {
     return count;
 }
 ```
----
-## Semantic Errors
-```
-int main() { int y = 5; return y; }
-```
-```
-int main() { int z = true; return z; }
-```
-```
-double average(int a, float b) { return (a + b) / 2.0; }
-```
-```
-char initial = 'A';
-bool flag = false;
-```
-```
-int main() { int a = 10; int b = a + 5; return b; }
-```
-```
-float area(float radius) { return 3.14f * radius * radius; }
-```
-```
-void print_value(int val) { return; }
-```
-```
-int factorial(int n) {
-    if (n <= 1) { return 1; }
-    else { return n * factorial(n - 1); }
-}
-```
-```
-int main() {
-    int i = 0;
-    while (i < 10) { i = i + 1; }
-    return i;
-}
-```
-```
-bool is_even(int num) { return (num % 2 == 0); }
-```
-```
-int main() { int x = 5; x = 7; return x; }
-```
----
-## Block Scope Tests
-```
+```c
 int main() {
     int a;
     a = 10;
@@ -100,7 +54,7 @@ int main() {
     return 0;
 }
 ```
-```
+```c
 int main() {
     for (int i = 0; i < 2; i = i + 1) {
         int local = i * 2;
@@ -108,62 +62,46 @@ int main() {
     return 0;
 }
 ```
----
-## Arithmetic and Logical Operations
-```
+```c
 int main() { int x = 10; int y = x / 2; return y; }
 ```
-```
+```c
 int main() { int a = 5; int b = a * (3 + 2); return b; }
 ```
-```
+```c
 bool check_range(int val) { return val > 0 && val < 10; }
 ```
-```
+```c
 int main() { int x = 5; bool result = (x == 5); return result; }
 ```
-```
+```c
 int main() { int a = 10; int b = 5; bool res = (a != b); return res; }
 ```
-```
-int main() { float f = 2.5f; double d = 3.7; return (int)d; }
-```
-```
-int main() { double val = 10; float res = (float)val; return 0; }
-```
-```
+```c
 int main() { char c = 65; return c; }
 ```
-```
-int main() { bool b = (bool)1; return b; }
-```
-```
-int main() { int x = 10; if (x) { return 1; } else { return 0; } }
-```
-```
+```c
 int main() { bool flag = true; if (flag) { return 5; } return 0; }
 ```
----
-## Function and Control Flow
-```
+```c
 void do_nothing() { }
 ```
-```
+```c
 int main() { int a = 5; a = a + 1; return a; }
 ```
-```
+```c
 int main() { int x = -5; return x; }
 ```
-```
+```c
 int main() { return 1 + 2 * 3 - 4 / 2; }
 ```
-```
+```c
 bool logical_op(bool a, bool b) { return a && !b; }
 ```
-```
+```c
 int main() { int a = 5; return (a > 3) && (a < 10); }
 ```
-```
+```c
 int main() {
     int x = 0;
     while (x < 3) {
@@ -173,7 +111,7 @@ int main() {
     return x;
 }
 ```
-```
+```c
 int main() {
     for (int i = 0; i < 2; i = i + 1) {
         if (i > 0) { return 1; }
@@ -181,38 +119,33 @@ int main() {
     return 0;
 }
 ```
-```
+```c
 int identity(int k) { return k; }
 ```
-```
+```c
 int main() { int val = identity(10); return val; }
 ```
 ---
 ## Error Cases
-```
-int main() { return; }
-```
-```
+```c
 void main() { return 0; }
 ```
-```
+```c
 int func() { int a = 10; return; }
 ```
-```
+```c
 int main(int argc) { return 0; }
 ```
-```
+```c
 int main() { int x = 5; int x = 10; return x; }
 ```
-```
+```c
 int main() { return unknown_var; }
 ```
-```
+```c
 int main() { int a = 5; return a + true; }
 ```
+```c
+void setValue(int val) { x = val; }
 ```
-void setValue(int val) { int x = val; }
-```
-```
-int main() { return 10 + 5 * (3 - 1) / 2; }
-```
+

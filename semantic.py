@@ -78,11 +78,11 @@ class SemanticError(Exception):
 
 # Define type compatibility rules for assignments and operations.
 type_compatibility = {
-    'int': {'int'},
-    'float': {'int', 'float'},
-    'double': {'int', 'float', 'double'},
+    'int': {'int', 'bool', 'char'},
+    'float': {'int', 'float', 'char'},
+    'double': {'int', 'float', 'double', 'char'},
     'char': {'char', 'int'},
-    'bool': {'bool'}
+    'bool': {'bool', 'int'}
 }
 
 

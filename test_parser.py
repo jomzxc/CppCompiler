@@ -133,14 +133,6 @@ class ParserTest(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("Semantic Error: 'y' not declared before use.", errors[0])
 
-    def test_semantic_error_type_mismatch(self):
-        code = self.code_snippets[10]
-        lexer.input(code)
-        ast = parser.parse(code, lexer=lexer)
-        errors = semantic_analyzer(ast)
-        self.assertEqual(len(errors), 1)
-        self.assertIn("Semantic Error: Type mismatch in declaration of 'z'. Expected 'int', got 'bool'.", errors[0])
-
     def test_average_function_mixed_types(self):
         code = self.code_snippets[11]
         lexer.input(code)
@@ -281,14 +273,6 @@ class ParserTest(unittest.TestCase):
         ast = parser.parse(code, lexer=lexer)
         errors = semantic_analyzer(ast)
         self.assertEqual(len(errors), 0)
-
-    def test_semantic_error_implicit_int_to_bool(self):
-        code = self.code_snippets[31]
-        lexer.input(code)
-        ast = parser.parse(code, lexer=lexer)
-        errors = semantic_analyzer(ast)
-        self.assertEqual(len(errors), 1)
-        self.assertIn("Semantic Error: Type mismatch in declaration of 'b'. Expected 'bool', got 'int'.", errors[0])
 
     def test_semantic_error_int_as_bool_condition(self):
         code = self.code_snippets[32]

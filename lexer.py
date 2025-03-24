@@ -103,7 +103,7 @@ def t_DOUBLE_NUM(t):
     return t
 
 def t_INT_NUM(t):
-    r'\d+'
+    r'[+-]?\d+'
     """Handles integer numbers (sequences of digits).
     It converts the matched string to a Python integer."""
     try:
